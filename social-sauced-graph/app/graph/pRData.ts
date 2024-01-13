@@ -1,8 +1,8 @@
-const PRData = {
+export const PRData = {
   "data": [
     {
       "id": 71359796,
-      "user_id": 57568598,
+      "user_id": 1,
       "size": 274322,
       "node_id": "MDEwOlJlcG9zaXRvcnk3MTM1OTc5Ng==",
       "git_url": "git://github.com/open-sauced/insights.git",
@@ -24,7 +24,7 @@ const PRData = {
       ],
       "open_prs_count": 5,
       "closed_prs_count": 173,
-      "merged_prs_count": 276,
+      "merged_prs_count": 27,
       "draft_prs_count": 2,
       "spam_prs_count": 2,
       "pr_velocity_count": 0,
@@ -32,7 +32,7 @@ const PRData = {
     },
     {
       "id": 713597965,
-      "user_id": 575685985,
+      "user_id": 2,
       "size": 274322,
       "node_id": "MDEwOlJlcG9zaXRvcnk3MTM1OTc5Ng==",
       "git_url": "git://github.com/open-sauced/insights.git",
@@ -54,7 +54,7 @@ const PRData = {
       ],
       "open_prs_count": 5,
       "closed_prs_count": 173,
-      "merged_prs_count": 276,
+      "merged_prs_count": 2726,
       "draft_prs_count": 2,
       "spam_prs_count": 2,
       "pr_velocity_count": 0,
@@ -62,7 +62,7 @@ const PRData = {
     },
     {
       "id": 713597966,
-      "user_id": 575685986,
+      "user_id": 3,
       "size": 274322,
       "node_id": "MDEwOlJlcG9zaXRvcnk3MTM1OTc5Ng==",
       "git_url": "git://github.com/open-sauced/insights.git",
@@ -84,7 +84,7 @@ const PRData = {
       ],
       "open_prs_count": 5,
       "closed_prs_count": 173,
-      "merged_prs_count": 276,
+      "merged_prs_count": 6,
       "draft_prs_count": 2,
       "spam_prs_count": 2,
       "pr_velocity_count": 0,
@@ -92,7 +92,7 @@ const PRData = {
     },
     {
       "id": 713597967,
-      "user_id": 575685987,
+      "user_id": 4,
       "size": 274322,
       "node_id": "MDEwOlJlcG9zaXRvcnk3MTM1OTc5Ng==",
       "git_url": "git://github.com/open-sauced/insights.git",
@@ -114,7 +114,7 @@ const PRData = {
       ],
       "open_prs_count": 5,
       "closed_prs_count": 173,
-      "merged_prs_count": 276,
+      "merged_prs_count": 1,
       "draft_prs_count": 2,
       "spam_prs_count": 2,
       "pr_velocity_count": 0,
@@ -122,7 +122,7 @@ const PRData = {
     },
     {
       "id": 713597968,
-      "user_id": 575685988,
+      "user_id": 5,
       "size": 274322,
       "node_id": "MDEwOlJlcG9zaXRvcnk3MTM1OTc5Ng==",
       "git_url": "git://github.com/open-sauced/insights.git",
@@ -144,7 +144,7 @@ const PRData = {
       ],
       "open_prs_count": 5,
       "closed_prs_count": 173,
-      "merged_prs_count": 276,
+      "merged_prs_count": 26,
       "draft_prs_count": 2,
       "spam_prs_count": 2,
       "pr_velocity_count": 0,

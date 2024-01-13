@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Graph from 'react-graph-vis';
 
+import { PRData } from './prData';
+
 import Card from '../components/card'
 
 interface SocialGraphProps {
@@ -61,14 +63,6 @@ export default function SocialGraph({ selectedMetric }: SocialGraphProps) {
     node.size = connectionBubbleSize(node.id);
   });
 
-  // useEffect(() => {
-  //   if (selectedMetric === 'a') {
-  //     graph.nodes.forEach(node => {
-  //       node.size = connectionBubbleSize(node.id);
-  //     });
-  //   }
-  // }, [selectedMetric]);
-
   // Update size based on Contributions for every id map number of prs_merged to the size
   //   1. loop through all ids
   // 2. call API to get mergedPrs
@@ -77,6 +71,29 @@ export default function SocialGraph({ selectedMetric }: SocialGraphProps) {
   //   node.size = contributionBubbleSize(node.id);
   // });
 
+  const contributionBubbleSize = (userId: number) => {
+    // Find the user data in PRData
+    const userData = PRData.data.find(data => data.user_id === userId);
+  
+    // Get the user's merged PR count
+    const userMergedPRs = userData ? userData.merged_prs_count : 0;
+  
+    // Define a base size, a size increment per merged PR, and a maximum size
+    const baseSize = 10; // Base size for a bubble
+    const sizeIncrementPerMergedPR = 15; // Size increment for each merged PR
+    const maxSize = 40; // Maximum size for a bubble
+  
+    // Calculate the bubble size without exceeding the maximum size
+    const calculatedSize = baseSize + (userMergedPRs * sizeIncrementPerMergedPR);
+    return Math.min(calculatedSize, maxSize);
+  };
+  
+  // In your useEffect or where you update the graph nodes
+  graph.nodes.forEach(node => {
+    node.size = contributionBubbleSize(node.id);
+  });
+  
+
   const defaultSize = 32;
   useEffect(() => {
     // Create a deep copy of the graph data
@@ -84,7 +101,7 @@ export default function SocialGraph({ selectedMetric }: SocialGraphProps) {
       ...graphData,
       nodes: graphData.nodes.map(node => ({
         ...node,
-        size: selectedMetric === 'a' ? connectionBubbleSize(node.id) : defaultSize // replace 'defaultSize' with your default size logic
+        size: selectedMetric === 'a' ? connectionBubbleSize(node.id) : contributionBubbleSize(node.id) // replace 'defaultSize' with your default size logic
       }))
     };
 
