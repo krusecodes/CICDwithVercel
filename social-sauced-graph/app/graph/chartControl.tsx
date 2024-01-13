@@ -6,8 +6,20 @@ import { Input, Space, Radio, Typography, Switch } from 'antd'
 const { Search } = Input;
 const { Title, Text } = Typography;
 
-export default function ChartControl() {
+// interface IChartControl {
+//   onMetricChange: e
+// }
+
+interface ChartControlProps {
+  onMetricChange: (metric: string) => void;
+}
+
+export default function ChartControl({ onMetricChange }: ChartControlProps) {
   const [value, setValue] = useState(1);
+
+  const onBubbleSizeChange = (e: RadioChangeEvent) => {
+    onMetricChange(e.target.value);
+  };
 
   const onChange = (e: RadioChangeEvent) => {
     console.log('radio checked', e.target.value);
@@ -35,7 +47,7 @@ export default function ChartControl() {
           </Space>
         </Radio.Group>
         <Text>Bubble Size Metric</Text>
-        <Radio.Group defaultValue="a" buttonStyle="solid">
+        <Radio.Group defaultValue="a" buttonStyle="solid" onChange={onBubbleSizeChange}>
           <Radio.Button value="a">Connections</Radio.Button>
           <Radio.Button value="b">Contributions</Radio.Button>
         </Radio.Group>
