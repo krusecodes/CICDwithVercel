@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Graph from 'react-graph-vis';
 
 import { PRData } from './prData';
+import { UserData } from './prData';
 
 import Card from '../components/card'
 
@@ -105,8 +106,21 @@ export default function SocialGraph({ selectedMetric, selectHighlighter }: Socia
     return sortedNodes.slice(0, topCount).map(node => node.id);
   };
 
+  const getTopContributorsByMergedPRs = (graph, topCount) => {
+    const nodeMergedPRs = graph.nodes.map(node => ({
+      id: node.id,
+      mergedPRs: contributionBubbleSize(node.id) // Use your function to get the merged PRs count
+    }));
+  
+    // Sort the nodes based on merged PRs count and return top 'topCount' nodes
+    return nodeMergedPRs
+      .sort((a, b) => b.mergedPRs - a.mergedPRs)
+      .slice(0, topCount)
+      .map(node => node.id);
+  };
+
   useEffect(() => {
-    // Create a deep copy of the graph data
+    // Update graph with new sizes
     let updatedGraph = {
       ...graphData,
       nodes: graphData.nodes.map(node => ({
@@ -117,24 +131,40 @@ export default function SocialGraph({ selectedMetric, selectHighlighter }: Socia
   
     setGraphData(updatedGraph);
   
-    // Conditionally perform highlighting based on selectHighlighter
+    // Highlight nodes based on selectHighlighter
     if (selectHighlighter === 4) {
       let connectionsCount = getConnectionsCount(graphData);
       let topConnectedNodes = getTopConnectedNodes(connectionsCount, 5);
   
-      console.log('Top Connected Nodes:', topConnectedNodes); // Log to check the node IDs
-  
       if (networkRef.current) {
         networkRef.current.selectNodes(topConnectedNodes, true);
       }
+    } else if (selectHighlighter === 3) {
+      const topContributors = getTopContributorsByMergedPRs(graphData, 5);
+  
+      if (networkRef.current) {
+        networkRef.current.selectNodes(topContributors, true);
+      }
+    } else if (selectHighlighter === 2) {
+      if (UserData && UserData.data) {
+        const maintainerIds = UserData.data
+          .filter(user => user.is_maintainer)
+          .map(user => user.id);
+    
+        console.log('Maintainer IDs:', maintainerIds);
+    
+        if (networkRef.current) {
+          networkRef.current.selectNodes(maintainerIds, true);
+        }
+      }
     } else {
       if (networkRef.current) {
-        networkRef.current.selectNodes([], false); // Clear selection
+        networkRef.current.selectNodes([], false);
       }
     }
   }, [graphData, selectedMetric, selectHighlighter]);
   
-
+  
   // Use this function to access the network instance
   const events = {
     select: function (event: any) {

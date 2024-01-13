@@ -6,10 +6,6 @@ import { Input, Space, Radio, Typography, Switch } from 'antd'
 const { Search } = Input;
 const { Title, Text } = Typography;
 
-// interface IChartControl {
-//   onMetricChange: e
-// }
-
 interface ChartControlProps {
   onMetricChange: (metric: string) => void;
   onHighlightChange: (hightlight: number) => void;
@@ -28,14 +24,10 @@ export default function ChartControl({ onMetricChange, onHighlightChange }: Char
     onHighlightChange(highlightValue); // Update parent component's state
   };
 
-  const onChange = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value);
-    setValue(e.target.value);
-  };
-
   const onSwitchChange = (checked: boolean) => {
     console.log(`switch to ${checked}`);
   };
+
   return (
     <>
       <Space direction='vertical' size="middle">
