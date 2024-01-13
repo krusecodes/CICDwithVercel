@@ -7,24 +7,27 @@ import Card from '../components/card'
 
 interface SocialGraphProps {
   selectedMetric: string;
+  selectHighlighter: number;
 }
 
-export default function SocialGraph({ selectedMetric }: SocialGraphProps) {
+export default function SocialGraph({ selectedMetric, selectHighlighter }: SocialGraphProps) {
   const networkRef = useRef(null);
 
   const graph = {
     nodes: [
-      { id: 1, size: 0, image: "https://avatars.githubusercontent.com/u/237133?v=4", shape: "circularImage", title: "node 1 tooltip text" },
-      { id: 2, size: 0, image: "https://avatars.githubusercontent.com/u/237133?v=4", shape: "circularImage", title: "node 2 tooltip text" },
-      { id: 3, size: 0, image: "https://avatars.githubusercontent.com/u/237133?v=4", shape: "circularImage", title: "node 3 tooltip text" },
-      { id: 4, size: 0, image: "https://avatars.githubusercontent.com/u/237133?v=4", shape: "circularImage", title: "node 4 tooltip text" },
-      { id: 5, size: 0, image: "https://avatars.githubusercontent.com/u/237133?v=4", shape: "circularImage", title: "node 5 tooltip text" }
+      { id: 1, size: 0, image: "https://drive.google.com/file/d/19zG4JsSbLlChKbyXFPyDJ2Bpi_GmkGtp/view?usp=sharing", shape: "circularImage", title: "node 1 tooltip text" },
+      { id: 2, size: 0, image: "https://drive.google.com/file/d/19zG4JsSbLlChKbyXFPyDJ2Bpi_GmkGtp/view?usp=sharing", shape: "circularImage", title: "node 2 tooltip text" },
+      { id: 3, size: 0, image: "https://drive.google.com/file/d/19zG4JsSbLlChKbyXFPyDJ2Bpi_GmkGtp/view?usp=sharing", shape: "circularImage", title: "node 3 tooltip text" },
+      { id: 4, size: 0, image: "https://drive.google.com/file/d/19zG4JsSbLlChKbyXFPyDJ2Bpi_GmkGtp/view?usp=sharing", shape: "circularImage", title: "node 4 tooltip text" },
+      { id: 5, size: 0, image: "https://drive.google.com/file/d/19zG4JsSbLlChKbyXFPyDJ2Bpi_GmkGtp/view?usp=sharing", shape: "circularImage", title: "node 5 tooltip text" },
+      { id: 6, size: 0, image: "https://drive.google.com/file/d/19zG4JsSbLlChKbyXFPyDJ2Bpi_GmkGtp/view?usp=sharing", shape: "circularImage", title: "node 5 tooltip text" },
     ],
     edges: [
       { from: 1, to: 2 },
       { from: 1, to: 3 },
       { from: 2, to: 4 },
-      { from: 2, to: 5 }
+      { from: 2, to: 5 },
+      { from: 2, to: 6},
     ]
   };
 
@@ -39,8 +42,6 @@ export default function SocialGraph({ selectedMetric }: SocialGraphProps) {
   };
 
   const [graphData, setGraphData] = useState(graph);
-
-  //  search
 
   const connectionBubbleSize = (id: number) => {
     const graphEdges = graph.edges.length;
@@ -58,55 +59,81 @@ export default function SocialGraph({ selectedMetric }: SocialGraphProps) {
   // const foundObject = array.find(object => object.name === 'Bob');
   // console.log(foundObject); // { name: 'Bob' }
 
-  // Calculate and assign sizes to nodes
   graph.nodes.forEach(node => {
     node.size = connectionBubbleSize(node.id);
   });
 
-  // Update size based on Contributions for every id map number of prs_merged to the size
-  //   1. loop through all ids
-  // 2. call API to get mergedPrs
-  // 3. Add that to each node.size instead of what was there before
-  // graph.nodes.forEach(node => {
-  //   node.size = contributionBubbleSize(node.id);
-  // });
-
   const contributionBubbleSize = (userId: number) => {
-    // Find the user data in PRData
     const userData = PRData.data.find(data => data.user_id === userId);
   
-    // Get the user's merged PR count
     const userMergedPRs = userData ? userData.merged_prs_count : 0;
-  
-    // Define a base size, a size increment per merged PR, and a maximum size
-    const baseSize = 10; // Base size for a bubble
-    const sizeIncrementPerMergedPR = 15; // Size increment for each merged PR
-    const maxSize = 40; // Maximum size for a bubble
-  
-    // Calculate the bubble size without exceeding the maximum size
+
+    const baseSize = 10;
+    const sizeIncrementPerMergedPR = 15;
+    const maxSize = 40; 
     const calculatedSize = baseSize + (userMergedPRs * sizeIncrementPerMergedPR);
     return Math.min(calculatedSize, maxSize);
   };
-  
-  // In your useEffect or where you update the graph nodes
+
   graph.nodes.forEach(node => {
     node.size = contributionBubbleSize(node.id);
   });
   
 
-  const defaultSize = 32;
+  const getConnectionsCount = (graph) => {
+    let connectionsCount = {};
+    
+    // Count connections for each node
+    graph.edges.forEach(edge => {
+      connectionsCount[edge.from] = (connectionsCount[edge.from] || 0) + 1;
+      connectionsCount[edge.to] = (connectionsCount[edge.to] || 0) + 1;
+    });
+  
+    return connectionsCount;
+  };
+  
+  const getTopConnectedNodes = (connectionsCount, topCount) => {
+    // Create an array from the connectionsCount object and sort it
+    let sortedNodes = Object.keys(connectionsCount).map(key => ({
+      id: key,
+      count: connectionsCount[key]
+    }));
+  
+    sortedNodes.sort((a, b) => b.count - a.count);
+  
+    // Return the top 'topCount' nodes
+    return sortedNodes.slice(0, topCount).map(node => node.id);
+  };
+
   useEffect(() => {
     // Create a deep copy of the graph data
     let updatedGraph = {
       ...graphData,
       nodes: graphData.nodes.map(node => ({
         ...node,
-        size: selectedMetric === 'a' ? connectionBubbleSize(node.id) : contributionBubbleSize(node.id) // replace 'defaultSize' with your default size logic
+        size: selectedMetric === 'a' ? connectionBubbleSize(node.id) : contributionBubbleSize(node.id)
       }))
     };
-
-    setGraphData(updatedGraph); // Update the state with the modified graph
-  }, [selectedMetric]); // Dependency array includes selectedMetric
+  
+    setGraphData(updatedGraph);
+  
+    // Conditionally perform highlighting based on selectHighlighter
+    if (selectHighlighter === 4) {
+      let connectionsCount = getConnectionsCount(graphData);
+      let topConnectedNodes = getTopConnectedNodes(connectionsCount, 5);
+  
+      console.log('Top Connected Nodes:', topConnectedNodes); // Log to check the node IDs
+  
+      if (networkRef.current) {
+        networkRef.current.selectNodes(topConnectedNodes, true);
+      }
+    } else {
+      if (networkRef.current) {
+        networkRef.current.selectNodes([], false); // Clear selection
+      }
+    }
+  }, [graphData, selectedMetric, selectHighlighter]);
+  
 
   // Use this function to access the network instance
   const events = {
@@ -120,16 +147,6 @@ export default function SocialGraph({ selectedMetric }: SocialGraphProps) {
       }
     }
   };
-
-  // the below code is how I will distinguish how what should be highlighted and when
-  // useEffect to handle component updates
-  // useEffect(() => {
-  // This can be triggered by a state change, for instance
-  // if (networkRef.current) {
-  // Highlight nodes whenever you need by calling this method
-  // networkRef.current.selectNodes([1, 3], true);
-  // }
-  // }, [ dependencies that might trigger the highlight]);
 
   return (
     <Card className="w-full overflow-hidden">

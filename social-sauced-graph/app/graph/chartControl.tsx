@@ -12,13 +12,20 @@ const { Title, Text } = Typography;
 
 interface ChartControlProps {
   onMetricChange: (metric: string) => void;
+  onHighlightChange: (hightlight: number) => void;
 }
 
-export default function ChartControl({ onMetricChange }: ChartControlProps) {
+export default function ChartControl({ onMetricChange, onHighlightChange }: ChartControlProps) {
   const [value, setValue] = useState(1);
 
   const onBubbleSizeChange = (e: RadioChangeEvent) => {
     onMetricChange(e.target.value);
+  };
+
+  const highlightBubbleChange = (e: RadioChangeEvent) => {
+    const highlightValue = Number(e.target.value); // Convert to number
+    setValue(highlightValue); // Update local state
+    onHighlightChange(highlightValue); // Update parent component's state
   };
 
   const onChange = (e: RadioChangeEvent) => {
@@ -36,7 +43,7 @@ export default function ChartControl({ onMetricChange }: ChartControlProps) {
         <Search placeholder='Search for contributors' />
         <Text>Highlight you on the chart</Text>
         <Switch onChange={onSwitchChange} />
-        <Radio.Group onChange={onChange} value={value}>
+        <Radio.Group onChange={highlightBubbleChange} value={value}>
           <Space direction="vertical">
             <Text>Highlight on chart</Text>
             <Radio value={1}>Nothing</Radio>
